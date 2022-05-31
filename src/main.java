@@ -14,8 +14,16 @@ public class main {
 //        Parser3 p = new Parser3(l.getCode_tokens());
 //        p.getExressions();
 
-        String src = "  " +
-                //"if(a>2){d=b+1;}" +
+        String src = "if (var == 1024) { n = n / 4};" +
+                "b = 1;" +
+                "a = 2;" +
+                "if(b == 1) {a = a / 4} else {b = b / 4};" +
+                "if(a == 1) {a = a / 4} else {b = b / 4};" +
+                "while (b < 10) { b = 2*(b + 1); i = i + 1;};" +
+                "num = ((100+2) * (50-22)) + b + (200 - a);" +
+                "sum = 100/50;";
+        String src2 = "maksLox=(7-6)*((7-4)*7-5*6);" +
+                "if(a>2){d=b+1;}" +
                 "a=(22-2)*2;" +
                 "b = ((a - 45) - (30 - a));" +
                 "mama=b;";
