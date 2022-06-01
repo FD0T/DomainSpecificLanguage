@@ -1,20 +1,28 @@
 import java.util.*;
 
 public class Interpreter {
-    private final List<Expression> expressionLinkedList;
-    public static Map<String, Double> variables = new HashMap<>();
+    private final List<Expression> expressionLinkedList;     //Эта штука может вмещать в себя несколько
+                                                             //строк и интерпретировать их по очереди,
+                                                             //но был выбран способ ввода через scanner.
+                                                             //Если убрать while в main и лексеру дать
+                                                             //многострочный String, то все сработает грамотно ;)
+    public static Map<String, Double> variables = new HashMap<>(); //Уникальный переменные и их значения
+                                                                   //a.k.a "память of DSL"
 
 
     public Interpreter(List<Expression> expr) {
         this.expressionLinkedList = expr;
     }
 
-    public void interpreter() {
+    public void interpreter() {                         //вот и цикл для построчной интерпретации,
+                                                        //если на входе в лексер положить один большой string
         for (Expression expr : expressionLinkedList){
             rpnToAnswer(expressionToRPN(expr));
-            System.out.println(variables);}
+//            System.out.println(variables);
+        }
     }
 
+    //гениальнейший перевод в обратную польскую нотацию по ТОКЕНАМ
     private LinkedList<Token> expressionToRPN(Expression expr) {
         LinkedList<Token> current = new LinkedList<>();
         Stack<Token> stack = new Stack<>();
@@ -53,13 +61,14 @@ public class Interpreter {
         }
         while (!stack.empty()) current.add(stack.pop());
 
-        for (Token i : current) {
-            System.out.print(i.getValue() + " ");
-        }
-        System.out.println();
+//        for (Token i : current) {
+//            System.out.print(i.getValue() + " ");
+//        }
+//        System.out.println();
         return current;
     }
 
+    //гениальнейший математический подсчет на основе токенов, который стоят в порядке согласно reverse polish notation
     private void calculate(LinkedList<Token> rpn) {
         Stack<Token> stack = new Stack<>();
 
@@ -119,6 +128,7 @@ public class Interpreter {
         }
     }
 
+    //для упрощенной модификации идентифицирование строк while и if были вынесены отдельно
     private void rpnToAnswer(LinkedList<Token> rpn) {
         if (rpn.get(0).getType().equals("WHILE_KEYWORD")) {
             rpnToAnswerWhile(rpn);
@@ -131,6 +141,7 @@ public class Interpreter {
         calculate(rpn); //подсчет нетерминала assign
     }
 
+    //у if и while есть блок с условием. эта функция для них универсальна
     private boolean condition(LinkedList<Token> cond) {
         Stack<Token> stack = new Stack<>();
         boolean condition = false;
@@ -160,9 +171,10 @@ public class Interpreter {
         return condition;
     }
 
+    //гениальный подсчет while
     private void rpnToAnswerWhile(LinkedList<Token> rpn) {
-        LinkedList<Token> cond = new LinkedList<>();
-        LinkedList<Token> body = new LinkedList<>();
+        LinkedList<Token> cond = new LinkedList<>(); //дробим на условие
+        LinkedList<Token> body = new LinkedList<>(); //и тело
 
         for (int i = 1; i < 4; i++) cond.add(rpn.get(i));
         for (int i = 4; i < rpn.size(); i++) body.add(rpn.get(i));
@@ -173,12 +185,13 @@ public class Interpreter {
         }
     }
 
+    //гениальное ветвление if/else
     private void rpnToAnswerIf(LinkedList<Token> rpn) {
-        LinkedList<Token> cond = new LinkedList<>();
-        LinkedList<Token> body = new LinkedList<>();
-        LinkedList<Token> body2 = new LinkedList<>();
-        boolean boolelse = false;
-        int indexElse = 0;
+        LinkedList<Token> cond = new LinkedList<>();        //дробим иф на условия
+        LinkedList<Token> body = new LinkedList<>();        //тело когда тру
+        LinkedList<Token> body2 = new LinkedList<>();       //тело когда фолс (опционально)
+        boolean boolelse = false; //выполнить ветку else
+        int indexElse = 0;        //индекс (флаг) откуда выполнять else
         for(int i = 0; i < rpn.size(); i++){
             if (rpn.get(i).getType().equals("ELSE_KEYWORD")){
                 boolelse = true;
@@ -201,6 +214,7 @@ public class Interpreter {
         //System.out.println(condition(cond));
     }
 
+    //приоритеты для перевода в RPN
     private int getPriority(Token i) {
         if (i.getValue().toString().charAt(0) == '*' || i.getValue().toString().charAt(0) == '/') return 4;
         if (i.getValue().toString().charAt(0) == '+' || i.getValue().toString().charAt(0) == '-') return 3;
@@ -212,5 +226,10 @@ public class Interpreter {
         if(i.getType().equals("ELSE_KEYWORD")) return -5;
         else
             return 0;
+    }
+
+    //вывод "памяти" сеанса или кода (зависит от способа ввода)
+    public void getVariables(){
+        System.out.println(variables);
     }
 }

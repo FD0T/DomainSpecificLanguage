@@ -30,7 +30,7 @@ public class Parser {
     }
 
 
-// _____ПРОВЕРКА_НЕТЕРМИНАЛОВ____________________________________________________
+// НЕТЕРМИНАЛЫ (неуникальные, т.к. содержат другие терминалы; составные по этой же причине; много регулярок)
 
     protected void expr(boolean isCalled) throws ParseException {
         if (assign() || isWhile() || isIf() || isLinkedList()   ) {
@@ -130,6 +130,7 @@ public class Parser {
         } else return false;
     }
 
+    //оптимизация обобщение
     protected boolean value() {
         return var() || digit();
     }
@@ -155,7 +156,7 @@ public class Parser {
     }
 
 
-//  _____ПРОВЕРКА_ЛЕКСЕМ/ТЕРМИНАЛОВ________________________________________________________
+//  ТЕРМИНАЛЫ (уникальные, несоставные, одна регулярка)
 
     protected boolean var() {
         return checkToken("VAR");
@@ -221,10 +222,34 @@ public class Parser {
 
     protected boolean checkToken(String name) {
         next();
-        boolean result = this.currenToken.getType().equals(name); //проверяем, равен ли текущий токен тому, что передали в переменную name
+        boolean result = this.currenToken.getType().equals(name); //проверяем, равен ли текущий токен тому,
+                                                                  // что передали в переменную name
         if (!result) { //если токен не совпал, то двигаем итератор назад
             prev();
         }
         return result;
     }
 }
+
+//        корень грамматики
+//        lang -> expr+
+//        expr+ -> assign | while_keyword | isLinked_List
+//        assign -> VAR ASSIGN_OP expr_value
+//        expr_value -> value (op_value)*
+//        op_value -> OP value
+//        value -> DIGIT | VAR
+
+//        #Грамматика для бесконечных скобок:
+//        expr_value -> inf_Parenthesis_val | val_inf_Parenthesis -- заменяет обычный expr_value
+//        inf_Parenthesis_val -> L_BR expr_value R_BR (OP expr_value)*
+//        val_inf_Parenthesis -> value (OP (value | inf_Parenthesis_val) )*
+
+//        compare -> value OP_BOOL value
+
+//        #Грамматика для цикла while
+//        while_keyword -> WHILE_KW condition_while body_while
+//        condition_while -> \\( compare \\) | \\( VAR_BOOL \\)
+//        body_while -> START_WHILE expr+ FINISH_WHILE
+
+//        #Грамматика для условия if
+//        condition_if -> IF_KEYWORD L_BR compare R_BR START_WHILE expr+ FINISH_WHILE (ELSE_KW START_WHILE expr+ FINISH_WHILE)?

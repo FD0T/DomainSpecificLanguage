@@ -1,7 +1,7 @@
 public class Token {
-    private final String type;
-    private final StringBuffer value = new StringBuffer("");
-
+    private final String type;                               //тип переменной
+    private final StringBuffer value = new StringBuffer(""); //что хранит в себе
+                                                             //stringbuffer для удобного редактирования в циклах
     public Token(String type, StringBuffer value) {
         this.type = type;
         this.value.append(value);

@@ -20,7 +20,7 @@ public class Regexes {
         lexems.put("LIST_SIGN", Pattern.compile("^\\[]?$"));
 
         lexems.put("VAR", Pattern.compile("^[a-zA-Z][a-zA-Z0-9@]*$"));
-
+        //нужно отделить для удобства дифферинцирования var и kw
         KW.put("WHILE_KEYWORD", Pattern.compile("^while$"));
         KW.put("FOR_KEYWORD", Pattern.compile("^for$"));
         KW.put("IF_KEYWORD", Pattern.compile("^if$"));

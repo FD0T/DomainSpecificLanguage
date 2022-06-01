@@ -1,5 +1,7 @@
 import java.util.*;
 
+//этот класс можно было не создавать и использовать линкедлист линкедлистов токенов,
+//но для человеческого понимания пришлосьь прибегнуть к такому
 public class Expression {
     private final List<Token> EXPRESSION = new LinkedList<>();
 

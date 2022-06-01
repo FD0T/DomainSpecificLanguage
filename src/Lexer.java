@@ -1,30 +1,26 @@
 import java.util.regex.*;
 import java.util.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.FileReader;
-import java.io.BufferedReader;
 
 public class Lexer {
     private final static List<Token> tokens = new LinkedList<>();
 
     protected void lexer(String src) {
-        StringBuffer buffer = new StringBuffer();
-        String buffString = "";
-        boolean isValid;
-        int i = 0;
-        int length = src.length();
-        Matcher m;
+        StringBuffer buffer = new StringBuffer(); //для содержимого токена
+        String buffString = "";                   //для его типа
+        boolean isValid;                          //KW or VAR
+        int i = 0;                                //индекс символа в строке
+        int length = src.length();                //собственно длина строки
+        Matcher m;                                //сверялка проверялка по регулярке
 
         while (i < length) { //Проходимся по всем символам в строке src
-            if (i == length - 1 && src.charAt(i) == ';' || src.charAt(i) == '\t') break; //Условие конца программы
+            if (i == length - 1 && src.charAt(i) == ';' || src.charAt(i) == '\t') break; //условие конца программы
+                                                                                         //конец строки, ;, перенос
+            buffer.append(src.charAt(i)); //взяли символ
 
-            buffer.append(src.charAt(i));
-
-            if (src.charAt(i) == ' ' || src.charAt(i) == ';') { //Пропуск пробелов или точек с запятой в строке
-                buffer.reverse();
-                buffer.deleteCharAt(0);
-                buffer.reverse();
+            if (src.charAt(i) == ' ' || src.charAt(i) == ';') { //игнорирование пробелов или точек с запятой в строке
+                buffer.reverse();       //гениальный способ удадения
+                buffer.deleteCharAt(0); //в самом конце стрингбуффера
+                buffer.reverse();       //если "не знаешь" индекс последнего символа
                 i++;
                 continue;
             }
@@ -67,9 +63,9 @@ public class Lexer {
             }
 
             if (!isValid) { //проверка конца лексемы в строке
-                buffer.reverse();
-                buffer.deleteCharAt(0);
-                buffer.reverse();
+                buffer.reverse();       //гениальный способ удадения
+                buffer.deleteCharAt(0); //в самом конце стрингбуффера
+                buffer.reverse();       //если "не знаешь" индекс последнего символа
 
                 tokens.add(new Token(buffString, buffer));
                 buffer.setLength(0);
